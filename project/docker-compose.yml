@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  frontend:
+    env_file:
+      - .env
+    build:
+      context: ./../frond-end
+      dockerfile: ./../frond-end/frondend.dockerfile
+    restart: always
+#TODO: we are exposing ports on internet - we need a proxy like caddy or nginx
+    ports:
+      - "80:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  broker-service:
+    build:
+      context: ./../broker-service
+      dockerfile: ./../broker-service/broker-service.dockerfile
+    restart: always
+#TODO: we are exposing ports on internet - we need a proxy like caddy or nginx
+    ports:
+      - "80:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  authentication-service:
+    env_file:
+      - .env
+    build:
+      context: ./../authentication-service
+      dockerfile: ./../authentication-service/authentication-service.dockerfile
+    restart: always
+    ports:
+      - "${AUTH_SERVICE_HOST_PORT}:${AUTH_SERVICE_CONTAINER_PORT}"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DNS: "host=postgres port=5433 user=postgres password=password dbname=users_db sslmode=disable timezone=UTC connect_timeout=5"
+#####################################
+###############
+# Volumes Help you to persis data, between each restart, it will keep data for you
+#
+#
+  postgres-db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=users_db
+    ports:
+      - '5433:5433'
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data
+
+  mongo-db:
+    image: mongo:4.2.16-bionic
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=logs
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+      - '27017:27017'
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - ./db-data/mongo/:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3.9-alpine
+    restart: always
+    ports:
+      - '5672:5672'
+    deploy:
+      #mode: global => means i just have one
+      mode: replicated
+      replicas: 1
+    volumes:
+      - ./db-data/rabbitmq/:/var/lib/rabbitmq
+
+  mailhog:
+    env_file:
+      - .env
+    image: 'mailhog/mailhog:latest'
+    ports:
+      - "1025:1025"
+      - "8025:8025"

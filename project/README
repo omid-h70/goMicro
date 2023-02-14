@@ -1,0 +1,35 @@
+############ Some Commands Ans Tips
+############
+############
+############
+#
+#
+#give directory to make file
+#make -C ./project build_logger
+#
+#
+#
+#
+#
+#build a specific service in composer.yml
+#docker-compose -f ./project/docker-compose.yml build authentication-service
+#
+#
+#
+#
+#run a specific service from docker-compose.yml
+#docker-compose -f ./project/docker-compose.yml up -d authentication-service
+#
+#get log from specific container
+#docker logs -f [CONTAINER_NAME]
+#
+# Debug Command for Docker Build
+# docker-compose -f ./project/docker-compose.yml build --no-cache --progress=plain authentication-service
+#
+# Build and Tag Image as Version
+# docker build -f ./project/docker-compose.yml -t omid-h70/authentication-service:1.0.0
+#
+#
+
+
+

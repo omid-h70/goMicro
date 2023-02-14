@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package logs;
+
+option go_package = "./../logger-service";
+
+message Log{
+  string name = 1;
+  string data = 2;
+}
+
+message LogRequest{
+  Log LogEntry = 1;
+}
+
+message LogResponse{
+  string response = 1;
+}
+
+service LogService{
+  //Unary gRPC Call
+  rpc WriteLog(LogRequest) returns (LogResponse){};
+}
