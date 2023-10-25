@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 )
@@ -32,14 +33,14 @@ func Dirname() (string, error) {
 }
 
 func main() {
-	cwd, _ := Dirname();
+	cwd, _ := Dirname()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		render(w, "index.page.gohtml")
 	})
 
 	destMapPath := filepath.Join(cwd, "/assets/css/")
-	http.Handle("/css/", http.StripPrefix("/css/",http.FileServer(http.Dir(destMapPath))))
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(destMapPath))))
 
 	serverAddr := fmt.Sprintf(":%s", helpers.GetEnvVar("FRONT_END_PORT", defaultPortNumber))
 	fmt.Printf("Starting front end service on %s \n", serverAddr)
@@ -57,7 +58,7 @@ func render(w http.ResponseWriter, page string) {
 		"./templates/footer.partial.gohtml",
 	}
 
-	cwd, _ := Dirname();
+	cwd, _ := Dirname()
 
 	/*Whatever Pages Come - use these Templates*/
 	templateSlice = append(templateSlice, filepath.Join(cwd, fmt.Sprintf("./templates/%s", page)))
@@ -74,7 +75,13 @@ func render(w http.ResponseWriter, page string) {
 		return
 	}
 
-	if err = tmpl.Execute(w, nil); err != nil {
+	var data struct {
+		BrokerURL string
+	}
+	data.BrokerURL = os.Getenv("BROKER_URL")
+	//data.BrokerURL = "http://localhost:8080"
+
+	if err = tmpl.Execute(w, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

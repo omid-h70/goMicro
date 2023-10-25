@@ -42,7 +42,7 @@
         let logGBtn = document.getElementById("logGBtn");
         let output = document.getElementById("output");
         let sent = document.getElementById("payload");
-        let recevied = document.getElementById("received");
+        let received = document.getElementById("received");
         let mailBtn = document.getElementById("mailBtn");
 
         mailBtn.addEventListener("click", function() {
@@ -66,7 +66,8 @@
                 headers: headers,
             }
 
-            fetch("http:\/\/localhost:8080/handle", body)
+            //fetch("http:\/\/localhost:8080/handle", body)
+            fetch("{{ print .BrokerURL "/handle" }}", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -100,7 +101,8 @@
                 headers: headers,
             }
 
-            fetch("http:\/\/localhost:8080/log-grpc", body)
+            //fetch("http:\/\/localhost:8080/log-grpc", body)
+            fetch("{{ print .BrokerURL "/handle" }}", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -134,7 +136,8 @@
                 headers: headers,
             }
 
-            fetch("http:\/\/localhost:8080/handle", body)
+            //fetch("http:\/\/localhost:8080/handle", body)
+            fetch("{{ print .BrokerURL "/handle" }}", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -169,7 +172,8 @@
                 headers: headers,
             }
 
-            fetch("http:\/\/localhost:8080/handle", body)
+            //fetch("http:\/\/localhost:8080/handle", body)
+            fetch("{{ print .BrokerURL "/handle" }}", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML = JSON.stringify(payload, undefined, 4);
@@ -191,7 +195,8 @@
                 method: 'POST',
             }
 
-            fetch("http:\/\/localhost:8080", body)
+            //fetch("http:\/\/localhost:8080", body)
+            fetch("{{ print .BrokerURL "/handle" }}", body)
                 .then((response) => response.json())
                 .then((data) => {
                     sent.innerHTML ="empty post request";
